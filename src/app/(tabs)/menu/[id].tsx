@@ -2,17 +2,22 @@ import { Image, Pressable, StyleSheet} from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
-import { Product } from '@/types';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { PizzaSize, Product } from '@/types';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import products from '@assets/data/products';
 import { defaultPizzaImage } from '@/components/ProductListItem';
 import { useState } from 'react';
 import Button from '@components/Button';
+import { useCart } from '@/providers/CartProvider';
 
-const sizes = ['S', 'M', 'L', 'XL']
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 const ProductDetailScreen = () => {
   const {id} = useLocalSearchParams();
-  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
+
+  const router = useRouter();
+
+  const {addItem} = useCart();
 
   //Get product data from the list of products
   const product = products.find((p) => p.id.toString() === id)
@@ -21,7 +26,13 @@ const ProductDetailScreen = () => {
     return <Text>Product Not found</Text>
   }
   const addToCart = () =>{
-      console.warn('Adding to cart, size: ', selectedSize)
+    if(!product){
+      return;
+    }
+      addItem(product, selectedSize);
+      // console.warn('Adding to cart, size: ', selectedSize)
+      // Navigate to the shoppping chart
+      router.push('/cart')
   }
   return (
     <View style={styles.container}>
@@ -65,6 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 'auto',
+    // color:'blue'
   },
 
   sizes: {
