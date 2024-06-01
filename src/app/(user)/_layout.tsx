@@ -9,7 +9,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useAuth } from '@/providers/AuthProvider';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
+function TabBarIcon(props: {                                                                                                                                                                                                                                                                                            
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
