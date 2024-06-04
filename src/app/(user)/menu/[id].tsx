@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet} from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet} from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
@@ -9,22 +9,20 @@ import { defaultPizzaImage } from '@/components/ProductListItem';
 import { useState } from 'react';
 import Button from '@components/Button';
 import { useCart } from '@/providers/CartProvider';
+import { useProduct } from '@/api/products';
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL']
 const ProductDetailScreen = () => {
-  const {id} = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);  // transform strings to ID number
+  const { data: product, error, isLoading } = useProduct(id);
+
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
 
   const router = useRouter();
 
   const {addItem} = useCart();
 
-  //Get product data from the list of products
-  const product = products.find((p) => p.id.toString() === id)
-  
-  if(!product){
-    return <Text>Product Not found</Text>
-  }
   const addToCart = () =>{
     if(!product){
       return;
@@ -33,6 +31,13 @@ const ProductDetailScreen = () => {
       // console.warn('Adding to cart, size: ', selectedSize)
       // Navigate to the shoppping chart
       router.push('/cart')
+  }
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error || !product) {
+    return <Text>Failed to fetch product</Text>;
   }
   return (
     <View style={styles.container}>

@@ -18,10 +18,10 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const  {isAdmin} = useAuth();
-
-  if(!isAdmin){   // If user is not admin send them the main pagexx
-    return <Redirect href={'/'} />
+  const { profile } = useAuth();
+  
+  if (!profile || profile.group !== 'ADMIN') { // If user is not admin send them the main pagexx
+    return <Redirect href="/" />;
   }
 
   return (
